@@ -68,7 +68,14 @@ public class MineStatTest
   // Tests if the server is up
   public void checkThatServerIsUp()
   {
-    MineStat ms = new MineStat("minecraft.frag.land", 25565);
+    MineStat ms = new MineStat("192.168.33.15", 26700);
     assertTrue(ms.isServerUp());
+  }
+  @Test
+  // Tests if the sample is retrieved
+  public void checkSample()
+  {
+    MineStat ms = new MineStat("192.168.33.15", 26700);
+    assertArrayEquals(new String[]{"tallchalk"}, ms.getPlayerSample());
   }
 }

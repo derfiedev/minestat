@@ -139,6 +139,11 @@ public class MineStat
   private int maximumPlayers;
 
   /**
+   * Player names sample, reported by the server
+   */
+  private String[] playerSample;
+
+  /**
    * Base64-encoded favicon possibly contained in JSON 1.7 responses
    * @since 3.0.2
    */
@@ -296,6 +301,10 @@ public class MineStat
   public int getMaximumPlayers() { return maximumPlayers; }
 
   public void setMaximumPlayers(int maximumPlayers) { this.maximumPlayers = maximumPlayers; }
+
+  public String[] getPlayerSample() { return playerSample; }
+
+  public void setPlayerSample(String[] playerSample) { this.playerSample = playerSample; } 
 
   public String getFaviconB64() { return faviconB64; }
 
@@ -769,6 +778,33 @@ public class MineStat
       setVersion(jobj.get("version").getAsJsonObject().get("name").getAsString());
       setCurrentPlayers(jobj.get("players").getAsJsonObject().get("online").getAsInt());
       setMaximumPlayers(jobj.get("players").getAsJsonObject().get("max").getAsInt());
+      try
+      {
+        JsonObject playersObj = jobj.getAsJsonObject("players");
+
+        if(playersObj.has("sample") && playersObj.get("sample").isJsonArray())
+        {
+          JsonArray sampleArray = playersObj.getAsJsonArray("sample");
+          String[] names = new String[sampleArray.size()];
+
+          for(int i = 0; i < sampleArray.size(); i++)
+          {
+            JsonObject playerObj = sampleArray.get(i).getAsJsonObject();
+            names[i] = playerObj.get("name").getAsString();
+          }
+
+          setPlayerSample(names);
+        }
+        else
+        {
+          setPlayerSample(new String[0]);
+        }
+      }
+      catch(Exception e)
+      {
+        setPlayerSample(new String[0]);
+      }
+
       try
       {
         setFaviconB64(jobj.get("favicon").getAsString().split("base64,")[1]);
